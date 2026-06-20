@@ -1,0 +1,54 @@
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x23, 16, 2); 
+String songs[] = {"Song:Timeless", "Song:Oiiaoiia", "Song:Touchthesky", "Song:RingX3", "Song:Ihadhelp"};
+int position = 0;
+const int songCount = 5;
+
+void setup()
+{
+  pinMode(3, INPUT);//going up
+  pinMode(4, INPUT);//going down
+  pinMode(5, INPUT);//confirm
+  
+  lcd.begin(16, 2);
+  lcd.init(); 
+  lcd.backlight(); 
+  Serial.begin(9600);
+  lcd.setCursor(0, 0);
+  lcd.print("Choose a song:");
+  delay(3000);
+  lcd.clear();
+  showSong();
+
+}
+
+void loop()
+{ 
+  if (digitalRead(4) == HIGH) {
+    position++;
+    if (position >= songCount) position = 0;
+    showSong();
+    delay(200);
+  }
+  
+  if (digitalRead(3) == HIGH) {
+    position--;
+    if (position < 0) position = songCount - 1;
+    showSong();
+    delay(200);
+  }
+  
+  if (digitalRead(5) == HIGH) {
+      Serial.println(songs[position]);
+      delay(300);
+  }
+  
+}
+
+void showSong() {
+  lcd.setCursor(0, 0);
+  lcd.print("                "); // clear line
+  lcd.setCursor(0, 0);
+  lcd.print(songs[position]);
+}
